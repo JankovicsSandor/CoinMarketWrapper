@@ -1,5 +1,6 @@
 using CoinMarketWrapper.BussinessLogic.Asset;
 using CoinMarketWrapper.BussinessLogic.CoinMarket;
+using CoinMarketWrapper.BussinessLogic.History;
 using CoinMarketWrapper.NetworkClient;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CoinMarketWrapper
@@ -44,9 +46,13 @@ namespace CoinMarketWrapper
 
             services.AddTransient<ICoinMarketService, CoinMarketService>();
             services.AddTransient<IAssetService,AssetService>();
+            services.AddTransient<ITransactionHistoryService, TransactionHistoryService>();
 
             services.AddHttpClient<ICoinMarketHttpClient, CoinMarketHttpClient>();
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
